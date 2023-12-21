@@ -1,0 +1,55 @@
+ai0(0~999)
+kif_num 16000
+position_num 1913908
+kif_num 2495
+position_num 297658
+steps = 1869, train loss avr = 2.8525170, 0.5792376, 3.4317546, test loss = 2.3715809, 0.5608183, 2.9323991, test accuracy = 0.3584591, 0.6812433
+
+ai1(1000~1999)
+kif_num 21427
+position_num 2126540
+kif_num 2442
+position_num 244670
+steps = 2076, train loss avr = 2.7347409, 0.5354391, 3.2701800, test loss = 2.2917427, 0.5035139, 2.7952566, test accuracy = 0.3792920, 0.7280725
+
+ai2(2000~2999)
+kif_num 96637
+position_num 11720908
+kif_num 10791
+position_num 1307290
+steps = 11446, train loss avr = 2.0840392, 0.5099548, 2.5939940, test loss = 1.7893655, 0.4903405, 2.2797059, test accuracy = 0.4607163, 0.7345709
+
+ai3(3000~3999)
+kif_num 131251
+position_num 18322511
+kif_num 14756
+position_num 2065011
+steps = 17893, train loss avr = 2.0326490, 0.5139148, 2.5465638, test loss = 1.7771954, 0.5088843, 2.2860797, test accuracy = 0.4653863, 0.7165334
+
+ai4(4000~4999)
+kif_num 25713
+position_num 4059200
+kif_num 2920
+position_num 460176
+steps = 3964, train loss avr = 2.5616396, 0.5698132, 3.1314527, test loss = 2.1725146, 0.5887069, 2.7612215, test accuracy = 0.3975458, 0.6585446
+
+
+ai0 = ai1(5-5)
+ai3 > ai4(5-0)
+ai2 < ai3(2-3)
+ai1 < ai2(0-5)
+ai1 = ai4(10-10)
+ai0 < ai2(5-0)
+ai0 > ai4(7-3)
+
+ai0 <= ai1 < ai2 < ai3 
+
+
+git add mcts_player.py
+git add policy_value_resnet.py
+git add csa_to_hcpe.py
+git add features.py
+git add dataloader.py
+git add train.py
+git add base_player.py
+git commit -m "second"
