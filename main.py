@@ -475,6 +475,11 @@ class MCTSPlayer(BasePlayer):
                 print('info score mate 3 pv {}'.format(move_to_usi(matemove)), flush=True)
                 return move_to_usi(matemove), None
         '''
+        if not self.root_board.is_check():
+            matemove = self.root_board.mate_move_in_1ply()
+            if matemove:
+                print('info score mate 1 pv {}'.format(move_to_usi(matemove)), flush=True)
+                return move_to_usi(matemove), None
 
         # プレイアウト数をクリア
         self.playout_count1 = 0
@@ -546,21 +551,20 @@ class MCTSPlayer(BasePlayer):
         bestmove4, bestvalue4, ponder_move4 = self.get_bestmove_and_print_pv4()
         bestmove5, bestvalue5, ponder_move5 = self.get_bestmove_and_print_pv5()
         bestmove6, bestvalue6, ponder_move6 = self.get_bestmove_and_print_pv6()
-        
-        '''
-        file = open('yosoku.txt','a')
-        file.write(str(move_to_usi(ponder_move2)) if ponder_move2 else str(0000))
+    
+        '''file = open('yosoku.txt','a')
+        file.write(str(move_to_usi(ponder_move2))) if ponder_move2 else file.write(str('0000'))
         file.write(',')
-        file.write(str(move_to_usi(ponder_move3)) if ponder_move3 else str(0000))
+        file.write(str(move_to_usi(ponder_move3))) if ponder_move3 else file.write(str('0000'))
         file.write(',')
-        file.write(str(move_to_usi(ponder_move4)) if ponder_move4 else str(0000))
+        file.write(str(move_to_usi(ponder_move4))) if ponder_move4 else file.write(str('0000'))
         file.write(',')
-        file.write(str(move_to_usi(ponder_move5)) if ponder_move5 else str(0000))
+        file.write(str(move_to_usi(ponder_move5))) if ponder_move5 else file.write(str('0000'))
         file.write(',')
-        file.write(str(move_to_usi(ponder_move6)) if ponder_move6 else str(0000))
+        file.write(str(move_to_usi(ponder_move6))) if ponder_move6 else file.write(str('0000'))
         file.write('\n')
-        file.close()
-        '''
+        file.close()'''
+        
         
         if self.count < 2:
             self.ai1_select = ponder_move1
@@ -669,15 +673,19 @@ class MCTSPlayer(BasePlayer):
                 print('AI_6')
                 #ai_select_count[5] += 1
                 return move_to_usi(bestmove6), move_to_usi(ponder_move6) if ponder_move6 else None
+            else:
+                print('AI_3')
+                #ai_select_count[0] += 1
+                return move_to_usi(bestmove3), move_to_usi(ponder_move3) if ponder_move3 else None
 
     def stop(self):
         # すぐに中断する
         self.halt = 0
         self.count = 0
-        file = open('kekka.txt','a')    
+        '''file = open('kekka.txt','a')    
         file.writelines(str(ai_select_count))
         file.write('\n')
-        file.close()
+        file.close()'''
         
 
     def ponderhit(self, last_limits):
@@ -1241,10 +1249,14 @@ class MCTSPlayer(BasePlayer):
             cp, pv), flush=True)
     
     def get_bestmove_and_print_pv2(self):
+        # 探索にかかった時間を求める
         finish_time = time.time() - self.begin_time2
 
+        #探索結果の勝率が相手の平均勝率に近く選択確率の高い手を選択
         current_node = self.tree2.current_head
         player_value = 1 - current_node.value
+        player_value_list2.append(player_value)
+        player_value_ave = mean(player_value_list2)
 
         win_rate = np.zeros(len(current_node.child_move))
         for i in range(len(current_node.child_move)):
@@ -1252,11 +1264,32 @@ class MCTSPlayer(BasePlayer):
                 win_rate[i] = current_node.child_sum_value[i] / current_node.child_move_count[i]
             else:
                 win_rate[i] = None
+        win_sort_idx = np.argsort(-win_rate)
+        win_rate_diff = np.abs(player_value_ave - win_rate)
+        selected_index = win_rate_diff.argsort()[0].tolist()
+        for i in win_sort_idx:
+            if win_rate_diff[i] <= 0.1:
+                if current_node.policy[i] > current_node.policy[selected_index]:
+                    selected_index = i
 
-        selected_index = np.abs(win_rate - player_value).argsort()[0].tolist()
-        bestvalue = current_node.child_sum_value[selected_index] / current_node.child_move_count[selected_index]
+            elif np.isnan(win_rate[i]):
+                break
+
+        #勝率差が少ない手がない場合，すべての候補手から選択確率が最大の手を選択
+        if win_rate_diff[selected_index] > 0.1:
+            policy_list = np.zeros(len(current_node.child_move))
+            for i in win_sort_idx:
+                if np.isnan(win_rate[i]):
+                    break
+                else:
+                    policy_list[i] = current_node.policy[i]
+            selected_index = np.argmax(policy_list)
+
+
+        # 選択した着手の勝率の算出
+        bestvalue = win_rate[selected_index]
+
         bestmove = current_node.child_move[selected_index]
-
         # 勝率を評価値に変換
         if bestvalue == 1.0:
             cp = 30000
@@ -1848,10 +1881,14 @@ class MCTSPlayer(BasePlayer):
             cp, pv), flush=True)
     
     def get_bestmove_and_print_pv4(self):
+        # 探索にかかった時間を求める
         finish_time = time.time() - self.begin_time4
 
+        #探索結果の勝率が相手の平均勝率に近く選択確率の高い手を選択
         current_node = self.tree4.current_head
         player_value = 1 - current_node.value
+        player_value_list4.append(player_value)
+        player_value_ave = mean(player_value_list4)
 
         win_rate = np.zeros(len(current_node.child_move))
         for i in range(len(current_node.child_move)):
@@ -1859,9 +1896,31 @@ class MCTSPlayer(BasePlayer):
                 win_rate[i] = current_node.child_sum_value[i] / current_node.child_move_count[i]
             else:
                 win_rate[i] = None
+        win_sort_idx = np.argsort(-win_rate)
+        win_rate_diff = np.abs(player_value_ave - win_rate)
+        selected_index = win_rate_diff.argsort()[0].tolist()
+        for i in win_sort_idx:
+            if win_rate_diff[i] <= 0.1:
+                if current_node.policy[i] > current_node.policy[selected_index]:
+                    selected_index = i
 
-        selected_index = np.abs(win_rate - player_value).argsort()[0].tolist()
-        bestvalue = current_node.child_sum_value[selected_index] / current_node.child_move_count[selected_index]
+            elif np.isnan(win_rate[i]):
+                break
+
+        #勝率差が少ない手がない場合，すべての候補手から選択確率が最大の手を選択
+        if win_rate_diff[selected_index] > 0.1:
+            policy_list = np.zeros(len(current_node.child_move))
+            for i in win_sort_idx:
+                if np.isnan(win_rate[i]):
+                    break
+                else:
+                    policy_list[i] = current_node.policy[i]
+            selected_index = np.argmax(policy_list)
+
+
+        # 選択した着手の勝率の算出
+        bestvalue = win_rate[selected_index]
+
         bestmove = current_node.child_move[selected_index]
 
 
