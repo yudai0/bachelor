@@ -682,10 +682,10 @@ class MCTSPlayer(BasePlayer):
         # すぐに中断する
         self.halt = 0
         self.count = 0
-        '''file = open('kekka.txt','a')    
+        file = open('kekka.txt','a')    
         file.writelines(str(ai_select_count))
         file.write('\n')
-        file.close()'''
+        file.close()
         
 
     def ponderhit(self, last_limits):
