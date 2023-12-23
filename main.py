@@ -544,7 +544,9 @@ class MCTSPlayer(BasePlayer):
             executor.submit(self.search5)
             executor.submit(self.search6)
         if cp_collect[0] == -30000:
-            return 'resign', None
+            return move_to_usi(current_node1.child_move[np.argmax(current_node1.child_move_count)])
+        if cp_collect[0] == 30000:
+            return move_to_usi(current_node1.child_move[np.argmax(current_node1.child_move_count)])
         bestmove1, bestvalue1, ponder_move1 = self.get_bestmove_and_print_pv1()
         bestmove2, bestvalue2, ponder_move2 = self.get_bestmove_and_print_pv2()
         bestmove3, bestvalue3, ponder_move3 = self.get_bestmove_and_print_pv3()
@@ -552,7 +554,7 @@ class MCTSPlayer(BasePlayer):
         bestmove5, bestvalue5, ponder_move5 = self.get_bestmove_and_print_pv5()
         bestmove6, bestvalue6, ponder_move6 = self.get_bestmove_and_print_pv6()
     
-        '''file = open('yosoku.txt','a')
+        file = open('yosoku.txt','a')
         file.write(str(move_to_usi(ponder_move2))) if ponder_move2 else file.write(str('0000'))
         file.write(',')
         file.write(str(move_to_usi(ponder_move3))) if ponder_move3 else file.write(str('0000'))
@@ -563,7 +565,7 @@ class MCTSPlayer(BasePlayer):
         file.write(',')
         file.write(str(move_to_usi(ponder_move6))) if ponder_move6 else file.write(str('0000'))
         file.write('\n')
-        file.close()'''
+        file.close()
         
         
         if self.count < 2:
@@ -574,9 +576,9 @@ class MCTSPlayer(BasePlayer):
             self.ai5_select = ponder_move5
             self.ai6_select = ponder_move6
             return move_to_usi(bestmove3), move_to_usi(ponder_move3) if ponder_move3 else None
-
-        #相手の手と比較
-        if self.cp >= 800 and self.count <= 60:
+        
+        # 次の手と比較
+        if self.cp >= 800:
             print('AI_1')
             ai_select_count[2] += 1
             self.ai1_select = ponder_move1
