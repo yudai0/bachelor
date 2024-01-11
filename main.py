@@ -588,16 +588,6 @@ class MCTSPlayer(BasePlayer):
             self.ai5_select = ponder_move5
             self.ai6_select = ponder_move6
             return move_to_usi(bestmove1), move_to_usi(ponder_move1) if ponder_move1 else None
-        elif self.player_select == self.ai3_select:
-            print('AI_3')
-            ai_select_count[0] += 1
-            self.ai1_select = ponder_move1
-            self.ai2_select = ponder_move2
-            self.ai3_select = ponder_move3
-            self.ai4_select = ponder_move4
-            self.ai5_select = ponder_move5
-            self.ai6_select = ponder_move6
-            return move_to_usi(bestmove3), move_to_usi(ponder_move3) if ponder_move3 else None
         elif self.player_select == self.ai2_select:
             print('AI_2')
             ai_select_count[1] += 1
@@ -608,6 +598,16 @@ class MCTSPlayer(BasePlayer):
             self.ai5_select = ponder_move5
             self.ai6_select = ponder_move6
             return move_to_usi(bestmove2), move_to_usi(ponder_move2) if ponder_move2 else None
+        elif self.player_select == self.ai3_select:
+            print('AI_3')
+            ai_select_count[0] += 1
+            self.ai1_select = ponder_move1
+            self.ai2_select = ponder_move2
+            self.ai3_select = ponder_move3
+            self.ai4_select = ponder_move4
+            self.ai5_select = ponder_move5
+            self.ai6_select = ponder_move6
+            return move_to_usi(bestmove3), move_to_usi(ponder_move3) if ponder_move3 else None     
         elif self.player_select == self.ai4_select:
             print('AI_4')
             ai_select_count[3] += 1
