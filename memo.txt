@@ -32,24 +32,3 @@ position_num 4059200
 kif_num 2920
 position_num 460176
 steps = 3964, train loss avr = 2.5616396, 0.5698132, 3.1314527, test loss = 2.1725146, 0.5887069, 2.7612215, test accuracy = 0.3975458, 0.6585446
-
-
-ai0 = ai1(5-5)
-ai3 > ai4(5-0)
-ai2 < ai3(2-3)
-ai1 < ai2(0-5)
-ai1 = ai4(10-10)
-ai0 < ai2(5-0)
-ai0 > ai4(7-3)
-
-ai0 <= ai1 < ai2 < ai3 
-
-
-git add mcts_player.py
-git add policy_value_resnet.py
-git add csa_to_hcpe.py
-git add features.py
-git add dataloader.py
-git add train.py
-git add base_player.py
-git commit -m "second"
